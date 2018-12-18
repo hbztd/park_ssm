@@ -81,7 +81,7 @@ public class RegisterView {
         user.setUserPhone(phone);
         if(role.equals(Const.RoleCode.R2.getDesc())) {
             user.setRoleId("r002");
-        } 
+        }
         return user;
     }
 }
