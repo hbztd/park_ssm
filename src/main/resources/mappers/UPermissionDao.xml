@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hbuas.dao.UPermissionDao">
+  <resultMap id="BaseResultMap" type="edu.hbuas.pojo.UPermission">
+    <result column="uid" jdbcType="VARCHAR" property="uid" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
+  </resultMap>
+  <insert id="insert" parameterType="edu.hbuas.pojo.UPermission">
+    insert into u_permission (`uid`, pid)
+    values (#{uid,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="edu.hbuas.pojo.UPermission">
+    insert into u_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        `uid`,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="selectAllPermissionByAccount" parameterType="string" resultType="string">
+    select url from permission p, u_permission u where uid = #{account} and pid = id
+  </select>
+</mapper>

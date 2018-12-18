@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hbuas.dao.SeatDao">
+  <resultMap id="BaseResultMap" type="edu.hbuas.pojo.Seat">
+    <id column="seat_id" jdbcType="VARCHAR" property="seatId" />
+    <result column="seat_num" jdbcType="VARCHAR" property="seatNum" />
+    <result column="seat_section" jdbcType="VARCHAR" property="seatSection" />
+    <result column="seat_state" jdbcType="INTEGER" property="seatState" />
+    <result column="seat_tag" jdbcType="VARCHAR" property="seatTag" />
+    <result column="seat_type" jdbcType="INTEGER" property="seatType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    seat_id, seat_num, seat_section, seat_state, seat_tag, seat_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from seat
+    where seat_id = #{seatId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from seat
+    where seat_id = #{seatId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="edu.hbuas.pojo.Seat">
+    insert into seat (seat_id, seat_num, seat_section, 
+      seat_state, seat_tag, seat_type
+      )
+    values (#{seatId,jdbcType=VARCHAR}, #{seatNum,jdbcType=VARCHAR}, #{seatSection,jdbcType=VARCHAR}, 
+      #{seatState,jdbcType=INTEGER}, #{seatTag,jdbcType=VARCHAR}, #{seatType,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.hbuas.pojo.Seat">
+    insert into seat
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="seatId != null">
+        seat_id,
+      </if>
+      <if test="seatNum != null">
+        seat_num,
+      </if>
+      <if test="seatSection != null">
+        seat_section,
+      </if>
+      <if test="seatState != null">
+        seat_state,
+      </if>
+      <if test="seatTag != null">
+        seat_tag,
+      </if>
+      <if test="seatType != null">
+        seat_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="seatId != null">
+        #{seatId,jdbcType=VARCHAR},
+      </if>
+      <if test="seatNum != null">
+        #{seatNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatSection != null">
+        #{seatSection,jdbcType=VARCHAR},
+      </if>
+      <if test="seatState != null">
+        #{seatState,jdbcType=INTEGER},
+      </if>
+      <if test="seatTag != null">
+        #{seatTag,jdbcType=VARCHAR},
+      </if>
+      <if test="seatType != null">
+        #{seatType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.hbuas.pojo.Seat">
+    update seat
+    <set>
+      <if test="seatNum != null">
+        seat_num = #{seatNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatSection != null">
+        seat_section = #{seatSection,jdbcType=VARCHAR},
+      </if>
+      <if test="seatState != null">
+        seat_state = #{seatState,jdbcType=INTEGER},
+      </if>
+      <if test="seatTag != null">
+        seat_tag = #{seatTag,jdbcType=VARCHAR},
+      </if>
+      <if test="seatType != null">
+        seat_type = #{seatType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where seat_id = #{seatId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.hbuas.pojo.Seat">
+    update seat
+    set seat_num = #{seatNum,jdbcType=VARCHAR},
+      seat_section = #{seatSection,jdbcType=VARCHAR},
+      seat_state = #{seatState,jdbcType=INTEGER},
+      seat_tag = #{seatTag,jdbcType=VARCHAR},
+      seat_type = #{seatType,jdbcType=INTEGER}
+    where seat_id = #{seatId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByTypeAndPage" parameterType="edu.hbuas.vo.FindView" resultMap="BaseResultMap">
+    select * from seat where 1=1 and seat_type != 3
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'seat_id'">
+          and seat_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_num'">
+          and seat_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_section'">
+          and seat_section like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_state'">
+          and seat_state like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_tag'">
+          and seat_tag like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_type'">
+          and seat_type like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'seat_id' and sortWay == 'desc'">
+          order by seat_name desc;
+        </when>
+        <when test="sortName == 'seat_id' and sortWay == 'asc'">
+          order by seat_id asc;
+        </when>
+        <when test="sortName == 'seat_num' and sortWay == 'desc'">
+          order by seat_num desc;
+        </when>
+        <when test="sortName == 'seat_num' and sortWay == 'asc'">
+          order by seat_num asc;
+        </when>
+        <when test="sortName == 'seat_section' and sortWay == 'desc'">
+          order by seat_section desc;
+        </when>
+        <when test="sortName == 'seat_section' and sortWay == 'asc'">
+          order by seat_section asc;
+        </when>
+        <when test="sortName == 'seat_state' and sortWay == 'desc'">
+          order by seat_state desc;
+        </when>
+        <when test="sortName == 'seat_state' and sortWay == 'asc'">
+          order by seat_state asc;
+        </when>
+        <when test="sortName == 'seat_tag' and sortWay == 'desc'">
+          order by seat_tag desc;
+        </when>
+        <when test="sortName == 'seat_tag' and sortWay == 'asc'">
+          order by seat_tag asc;
+        </when>
+        <when test="sortName == 'seat_type' and sortWay == 'desc'">
+          order by seat_type desc;
+        </when>
+        <when test="sortName == 'seat_type' and sortWay == 'asc'">
+          order by seat_type asc;
+        </when>
+      </choose>
+    </if>
+    limit #{start,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}
+  </select>
+  <select id="selectAllRecords" resultType="int">
+    select count(1) from seat where seat_type != 3;
+  </select>
+  <!--重复的sql执行了两次 此处可考虑改变bean -->
+  <select id="selectRecords" parameterType="edu.hbuas.vo.FindView" resultType="int">
+    select count(1) from seat where 1=1 and seat_type != 3
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'seat_id'">
+          and seat_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_num'">
+          and seat_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_section'">
+          and seat_section like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_state'">
+          and seat_state like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_tag'">
+          and seat_tag like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_type'">
+          and seat_type like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'seat_id' and sortWay == 'desc'">
+          order by seat_name desc;
+        </when>
+        <when test="sortName == 'seat_id' and sortWay == 'asc'">
+          order by seat_id asc;
+        </when>
+        <when test="sortName == 'seat_num' and sortWay == 'desc'">
+          order by seat_num desc;
+        </when>
+        <when test="sortName == 'seat_num' and sortWay == 'asc'">
+          order by seat_num asc;
+        </when>
+        <when test="sortName == 'seat_section' and sortWay == 'desc'">
+          order by seat_section desc;
+        </when>
+        <when test="sortName == 'seat_section' and sortWay == 'asc'">
+          order by seat_section asc;
+        </when>
+        <when test="sortName == 'seat_state' and sortWay == 'desc'">
+          order by seat_state desc;
+        </when>
+        <when test="sortName == 'seat_state' and sortWay == 'asc'">
+          order by seat_state asc;
+        </when>
+        <when test="sortName == 'seat_tag' and sortWay == 'desc'">
+          order by seat_tag desc;
+        </when>
+        <when test="sortName == 'seat_tag' and sortWay == 'asc'">
+          order by seat_tag asc;
+        </when>
+        <when test="sortName == 'seat_type' and sortWay == 'desc'">
+          order by seat_type desc;
+        </when>
+        <when test="sortName == 'seat_type' and sortWay == 'asc'">
+          order by seat_type asc;
+        </when>
+      </choose>
+    </if>
+  </select>
+</mapper>

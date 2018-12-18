@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hbuas.dao.FixedViewDao">
+  <resultMap id="BaseResultMap" type="edu.hbuas.vo.FixedView">
+    <result column="fixed_id" jdbcType="VARCHAR" property="fixedId" />
+    <result column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="entry_date" jdbcType="DATE" property="entryDate" />
+    <result column="entry_time" jdbcType="TIME" property="entryTime" />
+    <result column="out_date" jdbcType="DATE" property="outDate" />
+    <result column="out_time" jdbcType="TIME" property="outTime" />
+    <result column="car_num" jdbcType="VARCHAR" property="carNum" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+  </resultMap>
+  <select id="selectByTypeAndPage" parameterType="edu.hbuas.vo.FindView" resultMap="BaseResultMap">
+
+    select * from v_fixed where 1=1 and status = 0
+    <if test="type != null">
+      <choose>
+        <when test="type == 'fixed_id'">
+          and fixed_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'card_id'">
+          and card_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_time'">
+          and entry_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_date'">
+          and entry_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_date'">
+          and out_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_time'">
+          and out_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'car_num'">
+          and car_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'fixed_id' and sortWay == 'desc'">
+          order by fixed_id desc;
+        </when>
+        <when test="sortName == 'fixed_id' and sortWay == 'asc'">
+          order by fixed_id asc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'desc'">
+          order by card_id desc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'asc'">
+          order by card_id asc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'desc'">
+          order by entry_date desc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'asc'">
+          order by entry_date asc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'desc'">
+          order by entry_time desc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'asc'">
+          order by entry_time asc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'desc'">
+          order by out_date desc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'asc'">
+          order by out_date asc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'desc'">
+          order by out_time desc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'asc'">
+          order by out_time asc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'desc'">
+          order by car_num desc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'asc'">
+          order by car_num asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+      </choose>
+    </if>
+    limit #{start,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}
+  </select>
+  <!-- 此处out_date 与 out_time之间使用or连接会出错 使用and -->
+  <select id="selectEntryByTypeAndPage" parameterType="edu.hbuas.vo.FindView" resultMap="BaseResultMap">
+    select * from v_fixed where 1=1 and out_date is null and out_time is null and status = 0
+    <if test="type != null">
+      <choose>
+        <when test="type == 'fixed_id'">
+          and fixed_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'card_id'">
+          and card_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_time'">
+          and entry_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_date'">
+          and entry_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_date'">
+          and out_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_time'">
+          and out_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'car_num'">
+          and car_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'fixed_id' and sortWay == 'desc'">
+          order by fixed_id desc;
+        </when>
+        <when test="sortName == 'fixed_id' and sortWay == 'asc'">
+          order by fixed_id asc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'desc'">
+          order by card_id desc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'asc'">
+          order by card_id asc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'desc'">
+          order by entry_date desc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'asc'">
+          order by entry_date asc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'desc'">
+          order by entry_time desc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'asc'">
+          order by entry_time asc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'desc'">
+          order by out_date desc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'asc'">
+          order by out_date asc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'desc'">
+          order by out_time desc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'asc'">
+          order by out_time asc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'desc'">
+          order by car_num desc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'asc'">
+          order by car_num asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+      </choose>
+    </if>
+    limit #{start,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectEntryRecords" parameterType="edu.hbuas.vo.FindView" resultType="int">
+    select count(1) from v_fixed where 1=1 and out_date is null and out_time is null and status = 0
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'fixed_id'">
+          and fixed_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'card_id'">
+          and card_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_date'">
+          and entry_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_time'">
+          and entry_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_date'">
+          and out_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_time'">
+          and out_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'car_num'">
+          and car_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'fixed_id' and sortWay == 'desc'">
+          order by seat_name desc;
+        </when>
+        <when test="sortName == 'fixed_id' and sortWay == 'asc'">
+          order by fixed_id asc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'desc'">
+          order by card_id desc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'asc'">
+          order by card_id asc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'desc'">
+          order by entry_date desc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'asc'">
+          order by entry_date asc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'desc'">
+          order by entry_time desc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'asc'">
+          order by entry_time asc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'desc'">
+          order by out_date desc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'asc'">
+          order by out_date asc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'desc'">
+          order by out_time desc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'asc'">
+          order by out_time asc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'desc'">
+          order by car_num desc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'asc'">
+          order by car_num asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+      </choose>
+    </if>
+  </select>
+  <select id="selectAllRecords" resultType="int">
+    select count(1) from v_fixed where status = 0
+  </select>
+  <select id="selectAllEntryRecords" resultType="int">
+    select count(1) from v_fixed where out_date is null and out_time is null and status = 0
+  </select>
+  <select id="selectRecords" parameterType="edu.hbuas.vo.FindView" resultType="int">
+    select count(1) from v_fixed where 1=1 and status = 0
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'fixed_id'">
+          and fixed_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'card_id'">
+          and card_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_date'">
+          and entry_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'entry_time'">
+          and entry_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_date'">
+          and out_date like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'out_time'">
+          and out_time like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'car_num'">
+          and car_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'fixed_id' and sortWay == 'desc'">
+          order by seat_name desc;
+        </when>
+        <when test="sortName == 'fixed_id' and sortWay == 'asc'">
+          order by fixed_id asc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'desc'">
+          order by card_id desc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'asc'">
+          order by card_id asc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'desc'">
+          order by entry_date desc;
+        </when>
+        <when test="sortName == 'entry_date' and sortWay == 'asc'">
+          order by entry_date asc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'desc'">
+          order by entry_time desc;
+        </when>
+        <when test="sortName == 'entry_time' and sortWay == 'asc'">
+          order by entry_time asc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'desc'">
+          order by out_date desc;
+        </when>
+        <when test="sortName == 'out_date' and sortWay == 'asc'">
+          order by out_date asc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'desc'">
+          order by out_time desc;
+        </when>
+        <when test="sortName == 'out_time' and sortWay == 'asc'">
+          order by out_time asc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'desc'">
+          order by car_num desc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'asc'">
+          order by car_num asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+      </choose>
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="edu.hbuas.vo.FixedView">
+    insert into v_fixed (fixed_id, card_id, entry_date, 
+      entry_time, out_date, out_time, 
+      car_num, user_name)
+    values (#{fixedId,jdbcType=VARCHAR}, #{cardId,jdbcType=VARCHAR}, #{entryDate,jdbcType=DATE}, 
+      #{entryTime,jdbcType=TIME}, #{outDate,jdbcType=DATE}, #{outTime,jdbcType=TIME}, 
+      #{carNum,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="edu.hbuas.vo.FixedView">
+    insert into v_fixed
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fixedId != null">
+        fixed_id,
+      </if>
+      <if test="cardId != null">
+        card_id,
+      </if>
+      <if test="entryDate != null">
+        entry_date,
+      </if>
+      <if test="entryTime != null">
+        entry_time,
+      </if>
+      <if test="outDate != null">
+        out_date,
+      </if>
+      <if test="outTime != null">
+        out_time,
+      </if>
+      <if test="carNum != null">
+        car_num,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fixedId != null">
+        #{fixedId,jdbcType=VARCHAR},
+      </if>
+      <if test="cardId != null">
+        #{cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="entryDate != null">
+        #{entryDate,jdbcType=DATE},
+      </if>
+      <if test="entryTime != null">
+        #{entryTime,jdbcType=TIME},
+      </if>
+      <if test="outDate != null">
+        #{outDate,jdbcType=DATE},
+      </if>
+      <if test="outTime != null">
+        #{outTime,jdbcType=TIME},
+      </if>
+      <if test="carNum != null">
+        #{carNum,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

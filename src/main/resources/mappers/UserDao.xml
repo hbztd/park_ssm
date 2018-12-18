@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hbuas.dao.UserDao">
+  <resultMap id="BaseResultMap" type="edu.hbuas.pojo.User">
+    <id column="user_account" jdbcType="VARCHAR" property="account" />
+    <result column="user_role_id" jdbcType="VARCHAR" property="roleId" />
+    <result column="user_user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="user_user_pwd" jdbcType="VARCHAR" property="userPwd" />
+    <result column="user_user_phone" jdbcType="VARCHAR" property="userPhone" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user.account as user_account, user.role_id as user_role_id, user.user_name as user_user_name, 
+    user.real_name as user_real_name, user.user_pwd as user_user_pwd, user.user_phone as user_user_phone
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user user
+    where user.account = #{account,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user
+    where account = #{account,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="edu.hbuas.pojo.User">
+    insert into user (account, role_id, user_name, 
+      real_name, user_pwd, user_phone
+      )
+    values (#{account,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{realName,jdbcType=VARCHAR}, #{userPwd,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.hbuas.pojo.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        account,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="realName != null">
+        real_name,
+      </if>
+      <if test="userPwd != null">
+        user_pwd,
+      </if>
+      <if test="userPhone != null">
+        user_phone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null">
+        #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.hbuas.pojo.User">
+    update user
+    <set>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null">
+        user_pwd = #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where account = #{account,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.hbuas.pojo.User">
+    update user
+    set role_id = #{roleId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      user_pwd = #{userPwd,jdbcType=VARCHAR},
+      user_phone = #{userPhone,jdbcType=VARCHAR}
+    where account = #{account,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"/>
+    from user
+    where account = #{username}
+    and user_pwd = #{password}
+  </select>
+  <select id="checkAccount" resultType="int" parameterType="string">
+    select count(1) from user
+    where account = #{account}
+  </select>
+  <select id="getPwd" resultType="string" parameterType="string">
+    select user_pwd from user
+    where account = #{username}
+  </select>
+  <select id="selectAllPermissionByAccount" parameterType="string" resultType="string">
+    select url from permission p, u_permission u where uid = #{account} and pid = id
+  </select>
+</mapper>

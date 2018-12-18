@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hbuas.dao.CardDao">
+  <resultMap id="BaseResultMap" type="edu.hbuas.pojo.Card">
+    <id column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="seat_id" jdbcType="VARCHAR" property="seatId" />
+    <result column="seat_num" jdbcType="VARCHAR" property="seatNum" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_gender" jdbcType="VARCHAR" property="userGender" />
+    <result column="user_addr" jdbcType="VARCHAR" property="userAddr" />
+    <result column="car_num" jdbcType="VARCHAR" property="carNum" />
+  </resultMap>
+  <resultMap id="ResultMap" type="edu.hbuas.vo.CardView">
+    <id column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="seat_id" jdbcType="VARCHAR" property="seatId" />
+    <result column="seat_num" jdbcType="VARCHAR" property="seatNum" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_gender" jdbcType="VARCHAR" property="userGender" />
+    <result column="user_addr" jdbcType="VARCHAR" property="userAddr" />
+    <result column="car_num" jdbcType="VARCHAR" property="carNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    card_id, seat_id, user_name, user_gender, user_addr, car_num
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from card
+    where card_id = #{cardId,jdbcType=VARCHAR} and card_status = 0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from card
+    where card_id = #{cardId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="edu.hbuas.pojo.Card">
+    insert into card (card_id, seat_id, user_name, 
+      user_gender, user_addr, car_num
+      )
+    values (#{cardId,jdbcType=VARCHAR}, #{seatId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{userGender,jdbcType=VARCHAR}, #{userAddr,jdbcType=VARCHAR}, #{carNum,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.hbuas.pojo.Card">
+    insert into card
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cardId != null">
+        card_id,
+      </if>
+      <if test="seatId != null">
+        seat_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="userGender != null">
+        user_gender,
+      </if>
+      <if test="userAddr != null">
+        user_addr,
+      </if>
+      <if test="carNum != null">
+        car_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cardId != null">
+        #{cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null">
+        #{seatId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userGender != null">
+        #{userGender,jdbcType=VARCHAR},
+      </if>
+      <if test="userAddr != null">
+        #{userAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="carNum != null">
+        #{carNum,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.hbuas.pojo.Card">
+    update card
+    <set>
+      <if test="seatId != null">
+        seat_id = #{seatId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userGender != null">
+        user_gender = #{userGender,jdbcType=VARCHAR},
+      </if>
+      <if test="userAddr != null">
+        user_addr = #{userAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="carNum != null">
+        car_num = #{carNum,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where card_id = #{cardId,jdbcType=VARCHAR}
+  </update>
+  <!-- 设置主键会自动生成不会插入，若不是int自增类型逐渐不要添加主键属性 -->
+  <update id="updateByPrimaryKey" parameterType="edu.hbuas.pojo.Card">
+    update card
+    set seat_id = #{seatId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_gender = #{userGender,jdbcType=VARCHAR},
+      user_addr = #{userAddr,jdbcType=VARCHAR},
+      car_num = #{carNum,jdbcType=VARCHAR}
+    where card_id = #{cardId,jdbcType=VARCHAR}
+  </update>
+  <!-- sql语句不能再次拼接，拼接会出错 -->
+  <!-- desc降序 asc升序 -->
+  <select id="selectByTypeAndPage" parameterType="edu.hbuas.vo.FindView" resultMap="ResultMap">
+    select * from v_card where 1=1 and card_status = 0
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'card_id'">
+          and card_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_num'">
+          and seat_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_gender'">
+          and user_gender like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_addr'">
+          and user_addr like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'car_num'">
+          and car_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'card_id' and sortWay == 'desc'">
+          order by card_id desc;
+        </when>
+        <when test="sortName == 'card_id' and sortWay == 'asc'">
+          order by card_id asc;
+        </when>
+        <when test="sortName == 'seat_num' and sortWay == 'desc'">
+          order by seat_num desc;
+        </when>
+        <when test="sortName == 'seat_num' and sortWay == 'asc'">
+          order by seat_num asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+        <when test="sortName == 'user_gender' and sortWay == 'desc'">
+          order by user_gender desc;
+        </when>
+        <when test="sortName == 'user_gender' and sortWay == 'asc'">
+          order by user_gender asc;
+        </when>
+        <when test="sortName == 'user_addr' and sortWay == 'desc'">
+          order by user_addr desc;
+        </when>
+        <when test="sortName == 'user_addr' and sortWay == 'asc'">
+          order by user_addr asc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'desc'">
+          order by car_num desc;
+        </when>
+        <when test="sortName == 'car_num' and sortWay == 'asc'">
+          order by car_num asc;
+        </when>
+      </choose>
+    </if>
+    limit #{start,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}
+  </select>
+  <select id="selectAllRecords" resultType="int">
+    select count(1) from v_card where card_status = 0;
+  </select>
+  <update id="deleteByChangeStatus" parameterType="string">
+    update card set card_status = 1
+    where card_id = #{cardId, jdbcType=INTEGER}
+  </update>
+  <select id="selectRecords" parameterType="edu.hbuas.vo.FindView" resultType="int">
+    select count(1) from v_card where 1=1 and card_status = 0
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'card_id'">
+          and card_id like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'seat_num'">
+          and seat_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_gender'">
+          and user_gender like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_addr'">
+          and user_addr like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'car_num'">
+          and car_num like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+
+  </select>
+</mapper>
