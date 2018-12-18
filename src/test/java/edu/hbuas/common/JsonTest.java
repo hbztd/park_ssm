@@ -6,7 +6,7 @@ public class JsonTest {
 
     @Test
     public void JTest(){
-        ResponseJson json = ResponseJson.createByError("成功");
+        ResponseJson json = ResponseJson.createByError("成功了");
         System.out.println(json.getMsg());
         System.out.println(json.getData());
         ResponseJson json1 = ResponseJson.createBySuccess("成功");

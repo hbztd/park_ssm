@@ -20,7 +20,7 @@ public class DateTest {
        long l = 1544785467001L;
        long l2 = 1544785227000L;
        System.out.println((l-l2)/(1000*60));
-       String a = "F132456";
+       String a = "F13245";
        long b = new Long(a.split("F")[1]);
        System.out.println(b);
     }

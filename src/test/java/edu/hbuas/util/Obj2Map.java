@@ -12,7 +12,7 @@ public class Obj2Map {
         FindView findView = new FindView();
         findView.setSize(23);
         findView.setSortName("你哈啊");
-        findView.setSortWay("哈哈");
+        findView.setSortWay("哈哈哈");
         Map map = new BeanMap(findView);
         System.out.println(map);
     }
