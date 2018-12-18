@@ -1,5 +1,6 @@
 package edu.hbuas.controller;
 
+import edu.hbuas.common.Const;
 import edu.hbuas.common.ResponseJson;
 import edu.hbuas.pojo.User;
 import edu.hbuas.service.UserService;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,11 +46,7 @@ public class UserController {
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJson login(String username, String password) {
-        System.out.println(username);
-        System.out.println(password);
-//        redisCacheManager.set("test","hi");
-        ResponseJson responseJson = userService.login(username,password);
-        return responseJson;
+        return userService.login(username,password);
     }
 
     @RequestMapping(value = "getCode.do", method = RequestMethod.GET)
@@ -61,7 +59,7 @@ public class UserController {
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expires", -1);
         response.setContentType("image/jpg");
-//        允许跨域
+//        允许跨域 图像可以直接跨域
 //        response.setHeader("Access-Control-Allow-Credentials","true");
 //        response.setHeader("Access-Control-Allow-origin","http://localhost:8081");
 //        response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
@@ -93,6 +91,7 @@ public class UserController {
 
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
     @ResponseBody
+//    @RequiresRoles(value = {"admin"})
     public ResponseJson register(@RequestBody RegisterView registerView){
 //        return userService.register(user);
         System.out.println(registerView);
@@ -100,17 +99,33 @@ public class UserController {
     }
 
 
+//    ResponseJson.createByError(Const.ResponseCode.UNAUTHORIZED.getCode(), Const.ResponseCode.UNAUTHORIZED.getDesc());
+
+//    @RequestMapping(value = "unauthorized.do", method = RequestMethod.POST)
+//    @ResponseBody
+//    public ResponseJson unauthorized() {
+//        return ResponseJson.createByError(Const.ResponseCode.UNAUTHORIZED.getCode(), Const.ResponseCode.UNAUTHORIZED.getDesc());
+//    }
+
+    @RequestMapping(value = "needLogin.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson needLogin() {
+        return ResponseJson.createByError(Const.ResponseCode.NEED_LOGIN.getCode(),Const.ResponseCode.NEED_LOGIN.getDesc());
+    }
+
     @RequestMapping(value = "test.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJson shiroLogin(String username, String password){
         Subject subject = SecurityUtils.getSubject();
-        System.out.println(subject.getPrincipal());
         if(!subject.isAuthenticated()) {
-            password = MD5Util.MD5Encode(password+username);
+//            password = MD5Util.MD5Encode(password+username);
+            System.out.println(password);
             UsernamePasswordToken token = new UsernamePasswordToken(username,password);
             try{
                 subject.login(token);
+
             } catch (AuthenticationException e) {
+                e.printStackTrace();
                 System.out.println("登陆失败");
             }
         } else {

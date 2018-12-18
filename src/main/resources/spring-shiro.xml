@@ -60,9 +60,9 @@
          PropertiesPlaceholderConfigurer and abstract beans or anything else we might need: -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <property name="loginUrl" value="/login.jsp"/>
-        <property name="successUrl" value="/index.jsp"/>
-        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+        <property name="loginUrl" value="/user/needLogin.do"/>
+        <property name="successUrl" value="/user/success.do"/>
+        <property name="unauthorizedUrl" value="/user/unauthorized.do"/>
         <property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"/>
         <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean
              defined will be automatically acquired and available via its beanName in chain
@@ -83,6 +83,7 @@
             <!--</value>-->
         <!--</property>-->
     </bean>
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
     <bean id="filterChainDefinitionMap" factory-bean="filterChainDefinitionMapBuilder" factory-method="linkedHashMap"/>
     <bean id="filterChainDefinitionMapBuilder" class="edu.hbuas.shiro.FilterChainDefinitionMapBuilder"/>
 </beans>

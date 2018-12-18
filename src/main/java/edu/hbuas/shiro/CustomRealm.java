@@ -3,6 +3,7 @@ package edu.hbuas.shiro;
 
 import edu.hbuas.common.Const;
 import edu.hbuas.dao.UserDao;
+import edu.hbuas.pojo.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -26,11 +27,13 @@ public class CustomRealm extends AuthorizingRealm {
         System.out.println(authenticationToken);
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
 
-        Object principal = token.getPrincipal(); //前台传来的密码
+        Object principal = token.getPrincipal();
         System.out.println(principal);
-        String credentials = userDao.getPwd(token.getUsername()); //查询的密码
+//        String credentials = userDao.getPwd(token.getUsername()); //查询的密码
+
         String realmName = this.getName();
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principal,credentials,realmName);
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principal,"123456",realmName);
+        System.out.println("认证");
         return info;
     }
 
@@ -40,15 +43,17 @@ public class CustomRealm extends AuthorizingRealm {
 //        principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         Object principal = principalCollection.getPrimaryPrincipal(); // 获取登录的用户名
-        List<String> list = userDao.selectAllPermissionByAccount((String) principal);
-//        从权限表中得到map
-        if(principal.equals("admin")) {
+//        先判断用户角色 管理员直接赋予角色admin 其他查表赋予权限
+        User user = userDao.selectByPrimaryKey((String) principal);
+        String role = user.getRoleId();
+        if(role.equals(Const.RoleCode.R1.getCode())) {
             info.addRole("admin");
+        } else {
+            List<String> list = userDao.selectAllPermissionByAccount((String) principal);
+//        从权限表中得到map
+            info.addStringPermissions(list);
         }
-        if(principal.equals("user")) {
-            info.addRole("list");
-        }
-        info.addRole("user");
+        System.out.println("授权");
         return info;
     }
 }

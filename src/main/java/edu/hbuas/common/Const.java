@@ -9,7 +9,7 @@ public interface Const {
         SUCCESS(0,"SUCCESS"),
         ERROR(1,"ERROR"),
         NEED_LOGIN(10,"NEED_LOGIN"),
-        ILLEGAL_ARGUMENT(2,"ILLEGAL_ARGUMENT");
+        UNAUTHORIZED(2,"UNAUTHORIZED");
 
         private final int code;
         private final String desc;
@@ -32,8 +32,7 @@ public interface Const {
     public enum RoleCode{
 
         R1("r001", "超级管理员"),
-        R2("r002", "高级管理员"),
-        R3("r003", "普通管理员");
+        R2("r002", "普通管理员");
 
         private final String code;
         private final String desc;

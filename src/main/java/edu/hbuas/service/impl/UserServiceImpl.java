@@ -7,8 +7,13 @@ import edu.hbuas.service.UserService;
 import edu.hbuas.util.ImageVerify;
 import edu.hbuas.util.MD5Util;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 
 import java.util.Map;
@@ -26,14 +31,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseJson login(String username, String password) {
 //        此处加盐
-        User user = userDao.selectLogin(username,MD5Util.MD5Encode(password+username));
-        System.out.println(user);
-        if(user == null){
-            return ResponseJson.createByError("账号或密码错误");
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.isAuthenticated()) {
+            password = MD5Util.MD5Encode(password+username);
+            try{
+                UsernamePasswordToken token = new UsernamePasswordToken(username,password);
+                subject.login(token);
+            } catch (AuthenticationException e) {
+                return ResponseJson.createByError("用户名或密码错误");
+            }
         } else {
-            user.setUserPwd(StringUtils.EMPTY);
-            return ResponseJson.createBySuccess("登录成功", user);
+            return ResponseJson.createByError("请不要重复登录");
         }
+        User user = userDao.selectByPrimaryKey(username);
+        user.setUserPwd(StringUtils.EMPTY);
+        return ResponseJson.createBySuccess("登录成功", user);
     }
 
     public Map<String, Object> getVerifyImage(){
