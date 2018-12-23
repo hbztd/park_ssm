@@ -28,7 +28,7 @@ public class CustomRealm extends AuthorizingRealm {
     private UserDao userDao;
 
 
-//    实现认证
+//    实现认证   Authentication 认证;身份验证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println(authenticationToken);
@@ -44,7 +44,7 @@ public class CustomRealm extends AuthorizingRealm {
         return info;
     }
 
-//    实现授权
+//    实现授权  Authorization 授权，批准
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 //        principalCollection.getPrimaryPrincipal();
