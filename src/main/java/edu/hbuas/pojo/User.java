@@ -1,5 +1,7 @@
 package edu.hbuas.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -18,6 +20,8 @@ public class User implements Serializable {
     private String userPwd;
 
     private String userPhone;
+
+//    private String userEmail;
 
     private static final long serialVersionUID = 1L;
 
@@ -101,6 +105,14 @@ public class User implements Serializable {
         result = prime * result + ((getUserPhone() == null) ? 0 : getUserPhone().hashCode());
         return result;
     }
+
+//    public String getUserEmail() {
+//        return userEmail;
+//    }
+//
+//    public void setUserEmail(String userEmail) {
+//        this.userEmail = userEmail;
+//    }
 
     @Override
     public String toString() {

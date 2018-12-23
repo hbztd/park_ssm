@@ -174,7 +174,6 @@
   <select id="selectAllRecords" resultType="int">
     select count(1) from seat where seat_type != 3;
   </select>
-  <!--重复的sql执行了两次 此处可考虑改变bean -->
   <select id="selectRecords" parameterType="edu.hbuas.vo.FindView" resultType="int">
     select count(1) from seat where 1=1 and seat_type != 3
     <if test="type != null">

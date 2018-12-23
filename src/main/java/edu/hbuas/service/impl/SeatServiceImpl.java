@@ -74,10 +74,10 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public ResponseJson<String> updateSeat(Seat seat) {
-        if(redisService.seatIsExists(seat.getSeatNum())) {
+        Seat seat2 = seatDao.selectByPrimaryKey(seat.getSeatId());
+        if(redisService.seatIsExists(seat.getSeatNum()) && !seat2.getSeatNum().equals(seat.getSeatNum())) {
             return ResponseJson.createByError("该车位编号已存在");
         }
-        Seat seat2 = seatDao.selectByPrimaryKey(seat.getSeatId());
         String item = seat.getSeatNum() + "#" + seat.getSeatId();
         String item2 = seat2.getSeatNum() + "#" + seat2.getSeatId();
         if(seatDao.updateByPrimaryKeySelective(seat)>0) {

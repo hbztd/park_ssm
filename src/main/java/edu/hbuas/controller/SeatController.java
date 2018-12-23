@@ -5,6 +5,8 @@ import edu.hbuas.pojo.Seat;
 import edu.hbuas.service.SeatService;
 import edu.hbuas.util.RedisCacheManager;
 import edu.hbuas.vo.FindView;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,10 @@ public class SeatController {
     @RequestMapping(value = "add.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJson<String> add(@RequestBody Seat seat) {
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.hasRole("user")&&!subject.isPermitted("seat:add")) {
+            return ResponseJson.createByErrorNoPer();
+        }
         System.out.println(seat);
         return seatService.insertSeat(seat);
     }
@@ -34,6 +40,10 @@ public class SeatController {
     @RequestMapping(value = "delete.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJson<String> delete(@RequestBody Seat seat) {
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.hasRole("user")&&!subject.isPermitted("seat:delete")) {
+            return ResponseJson.createByErrorNoPer();
+        }
         System.out.println(seat.getSeatId());
         return seatService.deleteSeat(seat);
     }
@@ -41,12 +51,20 @@ public class SeatController {
     @RequestMapping(value = "update.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJson<String> update(@RequestBody Seat seat) {
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.hasRole("user")&&!subject.isPermitted("seat:update")) {
+            return ResponseJson.createByErrorNoPer();
+        }
         return seatService.updateSeat(seat);
     }
 
     @RequestMapping(value = "find.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJson find(@RequestBody FindView findSeatView){
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.hasRole("user")&&!subject.isPermitted("seat:find")) {
+            return ResponseJson.createByErrorNoPer();
+        }
         System.out.println(findSeatView);
         return seatService.selectByTypeAndPage(findSeatView);
     }

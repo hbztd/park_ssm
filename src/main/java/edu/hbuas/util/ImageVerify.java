@@ -25,7 +25,7 @@ public class ImageVerify {
             g.drawString(a+"",i*10,y);
             randomCode.append(a);
         }
-        for(int i=0;i<10; i++) {
+        for(int i=0;i<5; i++) {
             g.setColor(new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
             g.drawLine(10+random.nextInt(60),5+random.nextInt(30), 10+random.nextInt(60),5+random.nextInt(30) );
         }

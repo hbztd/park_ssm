@@ -16,8 +16,8 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from user user
-    where user.account = #{account,jdbcType=VARCHAR}
+    from  user
+    where account = #{account,jdbcType=VARCHAR} and user_status = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from user
@@ -104,12 +104,13 @@
       user_phone = #{userPhone,jdbcType=VARCHAR}
     where account = #{account,jdbcType=VARCHAR}
   </update>
-
+  <!--不推荐使用select * 暂不检查代码-->
   <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"/>
     from user
     where account = #{username}
     and user_pwd = #{password}
+    and user_status = 0
   </select>
   <select id="checkAccount" resultType="int" parameterType="string">
     select count(1) from user
@@ -118,8 +119,121 @@
   <select id="getPwd" resultType="string" parameterType="string">
     select user_pwd from user
     where account = #{username}
+    and user_status = 0
   </select>
-  <select id="selectAllPermissionByAccount" parameterType="string" resultType="string">
-    select url from permission p, u_permission u where uid = #{account} and pid = id
+  <select id="selectByTypeAndPage" parameterType="edu.hbuas.vo.FindView" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from user where 1=1 and user_status = 0
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'account'">
+          and account like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'real_name'">
+          and real_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_phone'">
+          and user_phone like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'account' and sortWay == 'desc'">
+          order by seat_name desc;
+        </when>
+        <when test="sortName == 'account' and sortWay == 'asc'">
+          order by account asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+        <when test="sortName == 'real_name' and sortWay == 'desc'">
+          order by real_name desc;
+        </when>
+        <when test="sortName == 'real_name' and sortWay == 'asc'">
+          order by real_name asc;
+        </when>
+        <when test="sortName == 'user_phone' and sortWay == 'desc'">
+          order by user_phone desc;
+        </when>
+        <when test="sortName == 'user_phone' and sortWay == 'asc'">
+          order by user_phone asc;
+        </when>
+      </choose>
+    </if>
+    limit #{start,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}
   </select>
+  <select id="selectAllRecords" resultType="int">
+    select count(1) from user where user_status = 0;
+  </select>
+  <select id="selectRecords" parameterType="edu.hbuas.vo.FindView" resultType="int">
+    select count(1) from user where 1=1 and user_status = 0
+    <if test="type != null">
+
+      <choose>
+        <when test="type == 'account'">
+          and account like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_name'">
+          and user_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'real_name'">
+          and real_name like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_phone'">
+          and user_phone like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+        <when test="type == 'user_email'">
+          and user_email like concat ('%', #{value,jdbcType=VARCHAR}, '%')
+        </when>
+      </choose>
+
+    </if>
+    <if test="sortName != null">
+      <choose>
+        <when test="sortName == 'account' and sortWay == 'desc'">
+          order by seat_name desc;
+        </when>
+        <when test="sortName == 'account' and sortWay == 'asc'">
+          order by account asc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'desc'">
+          order by user_name desc;
+        </when>
+        <when test="sortName == 'user_name' and sortWay == 'asc'">
+          order by user_name asc;
+        </when>
+        <when test="sortName == 'real_name' and sortWay == 'desc'">
+          order by real_name desc;
+        </when>
+        <when test="sortName == 'real_name' and sortWay == 'asc'">
+          order by real_name asc;
+        </when>
+        <when test="sortName == 'user_phone' and sortWay == 'desc'">
+          order by user_phone desc;
+        </when>
+        <when test="sortName == 'user_phone' and sortWay == 'asc'">
+          order by user_phone asc;
+        </when>
+        <when test="sortName == 'user_email' and sortWay == 'desc'">
+          order by user_email desc;
+        </when>
+        <when test="sortName == 'user_email' and sortWay == 'asc'">
+          order by user_email asc;
+        </when>
+      </choose>
+    </if>
+  </select>
+  <update id="deleteByChangeStatus" parameterType="string">
+    update user set user_status = 1
+    where account = #{tempId, jdbcType=INTEGER}
+  </update>
 </mapper>

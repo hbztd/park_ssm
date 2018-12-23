@@ -5,6 +5,7 @@ package edu.hbuas.common;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import javax.xml.ws.Response;
 import java.io.Serializable;
 
 @JsonSerialize(include =  JsonSerialize.Inclusion.NON_NULL)
@@ -77,6 +78,10 @@ public class ResponseJson<T> implements Serializable {
 
     public static <T> ResponseJson<T> createByError(int errorCode,String errorMessage){
         return new ResponseJson<T>(errorCode,errorMessage);
+    }
+
+    public static <T> ResponseJson<T> createByErrorNoPer() {
+        return new ResponseJson<T>(Const.ResponseCode.UNAUTHORIZED.getCode(),Const.ResponseCode.UNAUTHORIZED.getDesc());
     }
 
 

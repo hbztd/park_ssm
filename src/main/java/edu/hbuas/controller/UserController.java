@@ -2,16 +2,11 @@ package edu.hbuas.controller;
 
 import edu.hbuas.common.Const;
 import edu.hbuas.common.ResponseJson;
+import edu.hbuas.pojo.UPermission;
 import edu.hbuas.pojo.User;
 import edu.hbuas.service.UserService;
-import edu.hbuas.util.MD5Util;
-import edu.hbuas.util.RedisCacheManager;
-import edu.hbuas.vo.RegisterView;
-import org.apache.commons.lang3.StringUtils;
+import edu.hbuas.vo.FindView;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Map;
 
 @Controller
@@ -34,13 +28,11 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final RedisCacheManager redisCacheManager;
 
 
     @Autowired
-    public UserController(UserService userService, RedisCacheManager redisCacheManager) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.redisCacheManager = redisCacheManager;
     }
 
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
@@ -92,12 +84,111 @@ public class UserController {
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
     @ResponseBody
 //    @RequiresRoles(value = {"admin"})
-    public ResponseJson register(@RequestBody RegisterView registerView){
+    public ResponseJson register(@RequestBody User user){
 //        return userService.register(user);
-        System.out.println(registerView);
-        return userService.register(registerView.getUser());
+        Subject subject = SecurityUtils.getSubject();
+        System.out.println(user);
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.register(user);
     }
 
+    @RequestMapping(value = "update.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson<String> update(@RequestBody User user) {
+        Subject subject = SecurityUtils.getSubject();
+        System.out.println(user);
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.updateUser(user);
+    }
+
+    @RequestMapping(value = "delete.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson<String> delete(String account) {
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.deleteUser(account);
+    }
+
+
+    @RequestMapping(value = "find.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson find(@RequestBody FindView findUserView){
+        System.out.println(findUserView);
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.selectByTypeAndPage(findUserView);
+    }
+
+    @RequestMapping(value = "record.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson record(@RequestBody FindView findUserView){
+        System.out.println(findUserView);
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.selectRecords(findUserView);
+    }
+
+    @RequestMapping(value = "record2.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson recordAll(){
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.selectAllRecords();
+    }
+
+    @RequestMapping(value = "findPermission.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson findPermission(String account) {
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        return userService.selectAllPermission(account);
+    }
+
+    @RequestMapping(value = "addPermission.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson addPermission(@RequestBody UPermission uPermission) {
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        System.out.println(uPermission);
+        return userService.addUserPermission(uPermission);
+    }
+
+    @RequestMapping(value = "removePermission.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson removePermission(@RequestBody UPermission uPermission) {
+        Subject subject = SecurityUtils.getSubject();
+        if(!subject.hasRole("admin")) {
+            return ResponseJson.createByErrorNoPer();
+        }
+        System.out.println(uPermission);
+        return userService.removeUserPermission(uPermission);
+    }
+
+    @RequestMapping(value = "changePwd.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJson<String> changePassword(String oldPwd, String newPwd){
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()) {
+            return userService.changePwd(oldPwd,newPwd);
+        }
+        return ResponseJson.createByError("当前用户未认证");
+    }
 
 //    ResponseJson.createByError(Const.ResponseCode.UNAUTHORIZED.getCode(), Const.ResponseCode.UNAUTHORIZED.getDesc());
 
@@ -107,30 +198,9 @@ public class UserController {
 //        return ResponseJson.createByError(Const.ResponseCode.UNAUTHORIZED.getCode(), Const.ResponseCode.UNAUTHORIZED.getDesc());
 //    }
 
-    @RequestMapping(value = "needLogin.do", method = RequestMethod.POST)
+    @RequestMapping(value = "needLogin.do", method = RequestMethod.GET)
     @ResponseBody
     public ResponseJson needLogin() {
         return ResponseJson.createByError(Const.ResponseCode.NEED_LOGIN.getCode(),Const.ResponseCode.NEED_LOGIN.getDesc());
-    }
-
-    @RequestMapping(value = "test.do", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseJson shiroLogin(String username, String password){
-        Subject subject = SecurityUtils.getSubject();
-        if(!subject.isAuthenticated()) {
-//            password = MD5Util.MD5Encode(password+username);
-            System.out.println(password);
-            UsernamePasswordToken token = new UsernamePasswordToken(username,password);
-            try{
-                subject.login(token);
-
-            } catch (AuthenticationException e) {
-                e.printStackTrace();
-                System.out.println("登陆失败");
-            }
-        } else {
-            System.out.println("请不要重复登陆");
-        }
-        return ResponseJson.createSuccess();
     }
 }

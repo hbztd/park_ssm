@@ -28,7 +28,28 @@
       </if>
     </trim>
   </insert>
-  <select id="selectAllPermissionByAccount" parameterType="string" resultType="string">
-    select url from permission p, u_permission u where uid = #{account} and pid = id
+  <select id="selectAllPermissionByAccount" resultType="edu.hbuas.pojo.UPermission" parameterType="string">
+    select * from u_permission
+    where uid = #{account,jdbcType=VARCHAR}
+  </select>
+  <select id="selectPermissionName" resultType="string" parameterType="int">
+    select name from permission
+    where id = #{pid, jdbcType=INTEGER}
+  </select>
+  <select id="selectPermissionUrl" resultType="string" parameterType="int">
+    select url from permission
+    where id = #{pid, jdbcType=INTEGER}
+  </select>
+
+  <select id="permissionIsExist" resultType="int" parameterType="edu.hbuas.pojo.UPermission">
+    select count(1) from u_permission
+    where pid = #{pid, jdbcType=INTEGER} and uid = #{uid,jdbcType=VARCHAR}
+  </select>
+  <update id="removeUserPermission" parameterType="edu.hbuas.pojo.UPermission">
+    delete from u_permission
+    where pid = #{pid, jdbcType=INTEGER} and uid = #{uid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAllPermissionByDefault" resultType="int">
+    select id from permission
   </select>
 </mapper>

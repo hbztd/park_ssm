@@ -9,5 +9,15 @@ public interface UPermissionDao {
 
     int insertSelective(UPermission record);
 
-    List<String> selectAllPermissionByAccount(String account);
+    List<UPermission> selectAllPermissionByAccount(String account);
+
+    String selectPermissionName(int pid);
+
+    String selectPermissionUrl(int pid);
+
+    int permissionIsExist(UPermission uPermission);
+
+    int removeUserPermission(UPermission uPermission);
+
+    List<Integer> selectAllPermissionByDefault();
 }

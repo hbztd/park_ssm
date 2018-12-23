@@ -66,9 +66,18 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public ResponseJson<String> updateCard(Card card) {
+
         Card card2 = cardDao.selectByPrimaryKey(card.getCardId());
+//        验证前端传来的数据 未传递seatId使用原先的
+        System.out.println("card2:"+card2);
+        if(card.getSeatId().equals("")) {
+            System.out.println("测试");
+            card.setSeatId(card2.getSeatId());
+        }
+        System.out.println("card1:"+card);
         if(cardDao.updateByPrimaryKeySelective(card)>0) {
             if(!card.getSeatId().equals(card2.getSeatId())) {
+//                缓存
 //                删除之前的
                 Seat seat = seatDao.selectByPrimaryKey(card2.getSeatId());
                 redisService.removeSeatFreeItem(seat.getSeatNum()+"#"+seat.getSeatId());
@@ -77,6 +86,15 @@ public class CardServiceImpl implements CardService {
                 Seat seat2 = seatDao.selectByPrimaryKey(card.getSeatId());
                 redisService.addSeatFreeItem(seat2.getSeatNum()+"#"+seat2.getSeatId());
                 redisService.addAllCardItem(card.getCardId()+"#"+card.getUserName());
+//                车位状态
+//                释放之前的
+                seat.setSeatState(0);
+                seat.setSeatType(1);
+                seatDao.updateByPrimaryKeySelective(seat);
+//                        添加现在的
+                seat2.setSeatState(1);
+                seat2.setSeatType(2);
+                seatDao.updateByPrimaryKeySelective(seat2);
             }
             return ResponseJson.createBySuccess("更新成功");
         }

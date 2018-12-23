@@ -53,10 +53,10 @@ public class RedisServiceImpl implements RedisService {
         findView.setSize(size2);
         List<Seat> list2 = seatDao.selectByTypeAndPage(findView);
         for(Seat l : list2) {
-            System.out.println(l);
+//            System.out.println(l);
             if(l.getSeatType() == 1 || l.getSeatType() == 2) {
                 redisCacheManager.sSet("seatAll", l.getSeatNum());
-                System.out.println(l.getSeatNum());
+//                System.out.println(l.getSeatNum());
                 if (l.getSeatState() == 0) {
                     redisCacheManager.sSet("seatAllFree", l.getSeatNum() + "#" + l.getSeatId());
                 }
